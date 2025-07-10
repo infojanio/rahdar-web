@@ -18,7 +18,7 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     errorElement: <Error />,
     children: [
-      { path: '/', element: <Dashboard /> },
+      { index: true, element: <Dashboard /> },
       { path: 'orders', element: <Orders /> },
       { path: 'products', element: <ProductListPage /> },
       { path: 'products/new', element: <NewProductPage /> },
@@ -26,12 +26,14 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: '/auth',
+    path: '/sign-in',
     element: <AuthLayout />,
-    children: [
-      { path: 'sign-in', element: <SignIn /> },
-      { path: 'sign-up', element: <SignUp /> },
-    ],
+    children: [{ index: true, element: <SignIn /> }],
+  },
+  {
+    path: '/sign-up',
+    element: <AuthLayout />,
+    children: [{ index: true, element: <SignUp /> }],
   },
   {
     path: '*',

@@ -1,42 +1,30 @@
-import { isAxiosError } from 'axios'
-import { useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+// src/pages/_layouts/app.tsx
+import { Outlet } from 'react-router-dom'
 
-import { Header } from '@/components/header'
-import { api } from '@/lib/axios'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function AppLayout() {
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    const interceptorId = api.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (isAxiosError(error)) {
-          const status = error.response?.status
-          const code = error.response?.data.code
-
-          if (status === 401 && code === 'UNAUTHORIZED') {
-            navigate('/sign-in', { replace: true })
-          } else {
-            throw error
-          }
-        }
-      },
-    )
-
-    return () => {
-      api.interceptors.response.eject(interceptorId)
-    }
-  }, [navigate])
+  const { user, signOut } = useAuth()
 
   return (
-    <div className="flex min-h-screen flex-col antialiased">
-      <Header />
+    <div className="flex min-h-screen flex-col">
+      <header className="flex items-center justify-between bg-zinc-900 px-6 py-4 text-white">
+        <h1 className="text-lg font-bold">Painel do Parceiro</h1>
 
-      <div className="flex flex-1 flex-col gap-4 p-8 pt-6">
+        <div className="flex items-center gap-4">
+          <span className="text-sm">
+            Olá, <strong>{user?.name}</strong>
+          </span>
+          <Button variant="outline" size="sm" onClick={signOut}>
+            Sair
+          </Button>
+        </div>
+      </header>
+
+      <main className="flex flex-1 flex-col bg-zinc-950 p-6 text-white">
         <Outlet />
-      </div>
+      </main>
     </div>
   )
 }

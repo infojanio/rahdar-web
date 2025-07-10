@@ -1,50 +1,53 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { signIn } from '@/api/sign-in'
+import signIn from '@/api/sign-in'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useAuth } from '@/contexts/AuthContext'
 
 const signInForm = z.object({
-  email: z.string().email(),
+  email: z.string().email({ message: 'E-mail inválido' }),
+  password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
 })
 
 type SignInForm = z.infer<typeof signInForm>
 
 export function SignIn() {
-  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
 
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<SignInForm>({
-    defaultValues: {
-      email: searchParams.get('email') ?? '',
-    },
+    resolver: zodResolver(signInForm),
   })
 
   const { mutateAsync: authenticate } = useMutation({
     mutationFn: signIn,
   })
 
+  const { signIn: saveAuth } = useAuth()
+
   async function handleSignIn(data: SignInForm) {
     try {
-      await authenticate({ email: data.email })
+      const response = await authenticate(data)
 
-      toast.success('Enviamos um link de autenticação para seu e-mail.', {
-        action: {
-          label: 'Reenviar',
-          onClick: () => {
-            handleSignIn(data)
-          },
-        },
+      saveAuth({
+        user: response.user,
+        token: response.token,
       })
+
+      toast.success(`Bem-vindo, ${response.user.name}!`)
+      // ✅ Redirecionar para a dashboard após login
+      navigate('/')
     } catch (error) {
       toast.error('Credenciais inválidas.')
     }
@@ -73,6 +76,19 @@ export function SignIn() {
             <div className="space-y-2">
               <Label htmlFor="email">Seu e-mail</Label>
               <Input id="email" type="email" {...register('email')} />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input id="password" type="password" {...register('password')} />
+              {errors.password && (
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <Button disabled={isSubmitting} className="w-full" type="submit">

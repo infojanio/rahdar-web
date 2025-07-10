@@ -1,11 +1,15 @@
 import { Helmet } from 'react-helmet-async'
 
-import { DayOrdersAmountCard } from './day-orders-amount-card'
-import { MonthCanceledOrdersAmountCard } from './month-canceled-orders-amount-card'
-import { MonthOrdersAmountCard } from './month-orders-amount-card'
-import { MonthRevenueCard } from './month-revenue-card'
-import { PopularProductsChart } from './popular-products-chart'
-import { RevenueChart } from './revenue-chart'
+import { ActiveProductsCard } from './cards/ActiveProductsCard'
+import { CashbackGeneratedCard } from './cards/CashbackGeneratedCard'
+import { CashbackUsedCard } from './cards/CashbackUsedCard'
+import { TotalOrdersCard } from './cards/TotalOrdersCard'
+import { TotalStoresCard } from './cards/TotalStoresCard'
+import { TotalUsersCard } from './cards/TotalUsersCard'
+import { CashbackByMonthChart } from './charts/CashbackByMonthChart'
+import { TopProductsTable } from './charts/TopProductsTable'
+import { TopUsersTable } from './charts/TopUsersTable'
+import { LatestOrdersTable } from './charts/LatestOrdersTable'
 
 export function Dashboard() {
   return (
@@ -14,16 +18,22 @@ export function Dashboard() {
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
 
-        <div className="grid grid-cols-4 gap-4">
-          <MonthRevenueCard />
-          <MonthOrdersAmountCard />
-          <DayOrdersAmountCard />
-          <MonthCanceledOrdersAmountCard />
+        {/* Cards principais */}
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+          <TotalOrdersCard />
+          <TotalUsersCard />
+          <TotalStoresCard />
+          <ActiveProductsCard />
+          <CashbackGeneratedCard />
+          <CashbackUsedCard />
         </div>
 
-        <div className="grid grid-cols-9 gap-4">
-          <RevenueChart />
-          <PopularProductsChart />
+        {/* Gráficos e tabelas */}
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <CashbackByMonthChart />
+          <TopUsersTable />
+          <TopProductsTable />
+          <LatestOrdersTable />
         </div>
       </div>
     </>
