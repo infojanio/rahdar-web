@@ -1,30 +1,37 @@
 // src/pages/_layouts/app.tsx
-import { Outlet } from 'react-router-dom'
+import { Outlet } from "react-router-dom";
 
-import { Button } from '@/components/ui/button'
-import { useAuth } from '@/contexts/AuthContext'
+import { Sidebar } from "@/components/Sidebar";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function AppLayout() {
-  const { user, signOut } = useAuth()
+  const { user, signOut } = useAuth();
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="flex items-center justify-between bg-zinc-900 px-6 py-4 text-white">
-        <h1 className="text-lg font-bold">Painel do Parceiro</h1>
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar */}
+      <Sidebar />
 
-        <div className="flex items-center gap-4">
-          <span className="text-sm">
-            Olá, <strong>{user?.name}</strong>
-          </span>
-          <Button variant="outline" size="sm" onClick={signOut}>
-            Sair
-          </Button>
-        </div>
-      </header>
+      {/* Conteúdo principal */}
+      <div className="flex flex-1 flex-col">
+        <header className="flex items-center justify-between bg-gray-700 px-6 py-4 text-white">
+          <h1 className="text-lg font-bold">Painel Administrativo</h1>
 
-      <main className="flex flex-1 flex-col bg-zinc-950 p-6 text-white">
-        <Outlet />
-      </main>
+          <div className="flex items-center gap-4">
+            <span className="text-sm">
+              Olá, <strong>{user?.name}</strong>
+            </span>
+            <Button variant="default" size="sm" onClick={signOut}>
+              Sair
+            </Button>
+          </div>
+        </header>
+
+        <main className="flex-1 bg-gray-100 text-black p-6 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
-  )
+  );
 }

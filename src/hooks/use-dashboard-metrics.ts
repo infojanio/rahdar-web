@@ -1,33 +1,33 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from "@tanstack/react-query";
 
-import { api } from '@/lib/axios'
+import { api } from "@/lib/axios";
 
 export interface DashboardMetrics {
-  totalOrders: number
-  totalUsers: number
-  totalStores: number
-  activeProducts: number
-  totalCashbackGenerated: number
-  totalCashbackUsed: number
-  cashbackByMonth: { month: string; total: number }[]
+  totalOrders: number;
+  totalUsers: number;
+  totalStores: number;
+  activeProducts: number;
+  totalCashbackGenerated: number;
+  totalCashbackUsed: number;
+  cashbackByMonth: { month: string; total: number }[];
   latestValidatedOrders: {
-    id: string
-    total: number
-    cashback: number
-    userName: string
-    storeName: string
-    validatedAt: string
-  }[]
-  topUsers: { name: string; total: number }[]
-  topProducts: { name: string; totalSold: number }[]
+    id: string;
+    total: number;
+    cashback: number;
+    userName: string;
+    storeName: string;
+    validatedAt: string;
+  }[];
+  topUsers: { id: string; email: string; name: string; total: number }[];
+  topProducts: { id: string; name: string; totalSold: number }[];
 }
 
 export function useDashboardMetrics() {
   return useQuery<DashboardMetrics>({
-    queryKey: ['dashboard-metrics'],
+    queryKey: ["dashboard-metrics"],
     queryFn: async () => {
-      const response = await api.get('/dashboard/metrics')
-      return response.data
+      const response = await api.get("/dashboard/metrics");
+      return response.data;
     },
-  })
+  });
 }

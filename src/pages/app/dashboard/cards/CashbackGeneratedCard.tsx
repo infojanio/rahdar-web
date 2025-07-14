@@ -10,10 +10,10 @@ export function CashbackGeneratedCard() {
         <CardTitle>Cashback Gerado</CardTitle>
       </CardHeader>
       <CardContent>
-        <span className="text-2xl font-bold">
+        <span className="text-2xl font-bold text-green-600">
           {isLoading
             ? '...'
-            : `R$ ${data?.totalCashbackGenerated?.toFixed(2) ?? '0.00'}`}
+            : `R$ +${data?.totalCashbackGenerated?.toFixed(2) ?? '0.00'}`}
         </span>
       </CardContent>
     </Card>

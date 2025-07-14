@@ -1,11 +1,11 @@
 // src/pages/app/dashboard/tables/TopProductsTable.tsx
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useDashboardMetrics } from '@/hooks/use-dashboard-metrics'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDashboardMetrics } from "@/hooks/use-dashboard-metrics";
 
 export function TopProductsTable() {
-  const { data, isLoading } = useDashboardMetrics()
-  const products = data?.topProducts ?? []
+  const { data, isLoading } = useDashboardMetrics();
+  const products = data?.topProducts ?? [];
 
   return (
     <Card>
@@ -18,7 +18,7 @@ export function TopProductsTable() {
             <thead>
               <tr className="border-b border-muted">
                 <th className="px-4 py-2 text-left">Produto</th>
-                <th className="px-4 py-2 text-left">Loja</th>
+                <th className="px-4 py-2 text-left">Vendido por:</th>
                 <th className="px-4 py-2 text-right">Vendas</th>
               </tr>
             </thead>
@@ -45,7 +45,7 @@ export function TopProductsTable() {
                 products.map((product) => (
                   <tr key={product.id} className="border-b border-muted">
                     <td className="px-4 py-2 font-medium">{product.name}</td>
-                    <td className="px-4 py-2">{product.totalSold}</td>
+                    <td className="px-4 py-2">{"Loja Rhadar"}</td>
                     <td className="px-4 py-2 text-right">
                       {product.totalSold}
                     </td>
@@ -57,5 +57,5 @@ export function TopProductsTable() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

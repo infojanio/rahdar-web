@@ -1,11 +1,11 @@
 // src/pages/app/dashboard/tables/LatestOrdersTable.tsx
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useDashboardMetrics } from '@/hooks/use-dashboard-metrics'
-import { formatDate } from '@/utils/format-date'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDashboardMetrics } from "@/hooks/use-dashboard-metrics";
+import { formatDate } from "@/utils/format-date";
 
 export function LatestOrdersTable() {
-  const { data, isLoading } = useDashboardMetrics()
-  const orders = data?.latestValidatedOrders ?? []
+  const { data, isLoading } = useDashboardMetrics();
+  const orders = data?.latestValidatedOrders ?? [];
 
   return (
     <Card>
@@ -61,5 +61,5 @@ export function LatestOrdersTable() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
