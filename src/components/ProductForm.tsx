@@ -1,67 +1,68 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { Product } from '@/types/product'
+import { Product } from "@/types/product";
 
 interface ProductFormProps {
-  product?: Product
-  onSubmit: (data: Partial<Product>) => void
+  product?: Product;
+  onSubmit: (data: Partial<Product>) => void;
 }
 
 export function ProductForm({ product, onSubmit }: ProductFormProps) {
   const [formData, setFormData] = useState<Partial<Product>>({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     price: 0,
     quantity: 0,
     cashback_percentage: 0,
-    image: '',
+    image: "",
     status: true,
-    store_id: '',
-    subcategory_id: '',
-  })
-  const [errors, setErrors] = useState<Record<string, string>>({})
+    store_id: "",
+    subcategory_id: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (product) setFormData(product)
-  }, [product])
+    if (product) setFormData(product);
+  }, [product]);
 
   function handleChange(
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    >
   ) {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }))
+      [name]: type === "checkbox" ? checked : value,
+    }));
   }
 
   function validate() {
-    const newErrors: Record<string, string> = {}
-    if (!formData.name) newErrors.name = 'Nome é obrigatório'
+    const newErrors: Record<string, string> = {};
+    if (!formData.name) newErrors.name = "Nome é obrigatório";
     if (!formData.price || Number(formData.price) <= 0)
-      newErrors.price = 'Preço deve ser maior que 0'
+      newErrors.price = "Preço deve ser maior que 0";
     if (!formData.quantity || Number(formData.quantity) < 0)
-      newErrors.quantity = 'Quantidade não pode ser negativa'
-    if (!formData.store_id) newErrors.store_id = 'Loja é obrigatória'
+      newErrors.quantity = "Quantidade não pode ser negativa";
+    if (!formData.store_id) newErrors.store_id = "Loja é obrigatória";
     if (!formData.subcategory_id)
-      newErrors.subcategory_id = 'Subcategoria é obrigatória'
-    return newErrors
+      newErrors.subcategory_id = "Subcategoria é obrigatória";
+    return newErrors;
   }
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const validationErrors = validate()
+    e.preventDefault();
+    const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-      return
+      setErrors(validationErrors);
+      return;
     }
-    onSubmit(formData)
-    navigate('/products')
+    onSubmit(formData);
+    navigate("/products");
   }
 
   return (
@@ -69,7 +70,7 @@ export function ProductForm({ product, onSubmit }: ProductFormProps) {
       <div>
         <input
           name="name"
-          value={formData.name || ''}
+          value={formData.name || ""}
           onChange={handleChange}
           placeholder="Nome"
           className="w-full rounded border p-2"
@@ -79,7 +80,7 @@ export function ProductForm({ product, onSubmit }: ProductFormProps) {
       <div>
         <textarea
           name="description"
-          value={formData.description || ''}
+          value={formData.description || ""}
           onChange={handleChange}
           placeholder="Descrição"
           className="w-full rounded border p-2"
@@ -122,7 +123,7 @@ export function ProductForm({ product, onSubmit }: ProductFormProps) {
       <div>
         <input
           name="image"
-          value={formData.image || ''}
+          value={formData.image || ""}
           onChange={handleChange}
           placeholder="URL da Imagem"
           className="w-full rounded border p-2"
@@ -131,7 +132,7 @@ export function ProductForm({ product, onSubmit }: ProductFormProps) {
       <div>
         <input
           name="store_id"
-          value={formData.store_id || ''}
+          value={formData.store_id || ""}
           onChange={handleChange}
           placeholder="ID da Loja"
           className="w-full rounded border p-2"
@@ -143,7 +144,7 @@ export function ProductForm({ product, onSubmit }: ProductFormProps) {
       <div>
         <input
           name="subcategory_id"
-          value={formData.subcategory_id || ''}
+          value={formData.subcategory_id || ""}
           onChange={handleChange}
           placeholder="ID da Subcategoria"
           className="w-full rounded border p-2"
@@ -168,5 +169,5 @@ export function ProductForm({ product, onSubmit }: ProductFormProps) {
         Salvar
       </button>
     </form>
-  )
+  );
 }

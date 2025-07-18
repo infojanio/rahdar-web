@@ -1,11 +1,11 @@
 // src/components/ProductTable.tsx
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
 
-import { Product } from '@/types/product'
+import { Product } from "@/types/product";
 
 interface ProductTableProps {
-  products: Product[]
-  onDelete: (id: string) => void
+  products: Product[];
+  onDelete: (id: string) => void;
 }
 
 export function ProductTable({ products, onDelete }: ProductTableProps) {
@@ -26,7 +26,7 @@ export function ProductTable({ products, onDelete }: ProductTableProps) {
             <td className="p-2">{product.name}</td>
             <td className="p-2">R$ {Number(product.price).toFixed(2)}</td>
             <td className="p-2">{product.cashback_percentage}%</td>
-            <td className="p-2">{product.status ? 'Ativo' : 'Inativo'}</td>
+            <td className="p-2">{product.status ? "Ativo" : "Inativo"}</td>
             <td className="p-2">
               <Link
                 to={`/products/edit/${product.id}`}
@@ -45,5 +45,5 @@ export function ProductTable({ products, onDelete }: ProductTableProps) {
         ))}
       </tbody>
     </table>
-  )
+  );
 }
