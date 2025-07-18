@@ -5,7 +5,6 @@ import { env } from "@/env";
 
 export const api = axios.create({
   baseURL: env.VITE_API_URL,
-  withCredentials: true,
 });
 
 // Interceptor para incluir token sempre antes da requisição
