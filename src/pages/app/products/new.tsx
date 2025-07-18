@@ -1,5 +1,5 @@
-import { ProductForm } from '@/components/ProductForm'
-import { createProduct } from '@/services/products'
+import { ProductForm } from "@/components/ProductForm";
+import { createProduct } from "@/services/products";
 
 export default function NewProductPage() {
   return (
@@ -7,5 +7,5 @@ export default function NewProductPage() {
       <h1 className="mb-4 text-2xl font-bold">Novo Produto</h1>
       <ProductForm onSubmit={createProduct} />
     </div>
-  )
+  );
 }

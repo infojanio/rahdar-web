@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.tsx
 import { createContext, useContext, useEffect, useState } from "react";
 
 import { api } from "@/lib/axios";
@@ -14,7 +13,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   signOut: () => void;
-  signIn: (data: { user: User; token: string }) => void;
+  signIn: (data: { user: User; accessToken: string }) => void;
 }
 
 const AuthContext = createContext({} as AuthContextType);
@@ -27,23 +26,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = localStorage.getItem("token");
 
     if (storedUser && token) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      } catch (error) {
+        console.error("Erro ao recuperar usuário:", error);
+        signOut();
+      }
     }
   }, []);
 
   function signOut() {
     localStorage.clear();
     setUser(null);
+    delete api.defaults.headers.common.Authorization;
     window.location.href = "/sign-in";
   }
 
-  function signIn({ user, token }: { user: User; token: string }) {
-    localStorage.setItem("token", token);
+  function signIn({ user, accessToken }: { user: User; accessToken: string }) {
+    localStorage.setItem("token", accessToken);
     localStorage.setItem("user", JSON.stringify(user));
     setUser(user);
-    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
   }
 
   return (

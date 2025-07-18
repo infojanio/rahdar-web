@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// src/pages/products/ProductForm.tsx
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { api } from "@/lib/axios";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
@@ -12,24 +12,18 @@ type ProductFormData = {
   price: number;
   quantity: number;
   image?: string;
-  subcategory_id: string;
   cashback_percentage: number;
+  subcategory_id?: string;
+  status?: boolean;
 };
 
-type Subcategory = {
-  id: string;
-  name: string;
-};
-
-export function ProductEdit() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+export function ProductForm() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    reset,
     watch,
     setValue,
     formState: { isSubmitting },
@@ -37,42 +31,9 @@ export function ProductEdit() {
 
   const imageUrl = watch("image");
 
-  const { data: subcategories = [] } = useQuery<Subcategory[]>({
-    queryKey: ["subcategories"],
-    queryFn: async () => {
-      const response = await api.get("/subcategories");
-      console.log("🔍 Resposta bruta da API /subcategories:", response.data);
-      return Array.isArray(response.data)
-        ? response.data
-        : response.data.subcategories ?? [];
-    },
-  });
-
-  const { data: product, isLoading, error } = useQuery<ProductFormData>({
-    queryKey: ["product", id],
-    enabled: !!id,
-    queryFn: async () => {
-      const response = await api.get(`/products/${id}`);
-      const data = response.data;
-
-      return {
-        ...data,
-        price: Number(data.price),
-        quantity: Number(data.quantity),
-        cashback_percentage: Number(data.cashback_percentage),
-      };
-    },
-  });
-
-  useEffect(() => {
-    if (product) {
-      reset(product);
-    }
-  }, [product, reset]);
-
-  const { mutateAsync: updateProduct } = useMutation({
+  const { mutateAsync: createProduct } = useMutation({
     mutationFn: async (data: ProductFormData) => {
-      await api.patch(`/products/${id}`, data);
+      await api.post("/products", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -86,9 +47,9 @@ export function ProductEdit() {
       price: Number(data.price),
       quantity: Number(data.quantity),
       cashback_percentage: Number(data.cashback_percentage),
+      subcategory_id: data.subcategory_id || undefined,
     };
-
-    await updateProduct(payload);
+    await createProduct(payload);
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -98,12 +59,9 @@ export function ProductEdit() {
     setValue("image", url);
   }
 
-  if (isLoading) return <p>Carregando produto...</p>;
-  if (error) return <p>Erro ao carregar produto.</p>;
-
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Editar Produto</h1>
+      <h1 className="text-2xl font-bold mb-4">Adicionar Produto</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="block text-sm font-semibold">Nome</label>
@@ -112,22 +70,6 @@ export function ProductEdit() {
             className="w-full border p-2 rounded"
             required
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold">Subcategoria</label>
-          <select
-            {...register("subcategory_id")}
-            className="w-full border p-2 rounded"
-            required
-          >
-            <option value="">Selecione uma subcategoria</option>
-            {subcategories.map((sub) => (
-              <option key={sub.id} value={sub.id}>
-                {sub.name}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div>
@@ -192,9 +134,9 @@ export function ProductEdit() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
-          {isSubmitting ? "Salvando..." : "Salvar alterações"}
+          {isSubmitting ? "Salvando..." : "Salvar Produto"}
         </button>
       </form>
     </div>

@@ -21,7 +21,6 @@ type SignInForm = z.infer<typeof signInForm>;
 
 export function SignIn() {
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -30,25 +29,26 @@ export function SignIn() {
     resolver: zodResolver(signInForm),
   });
 
-  const { mutateAsync: authenticate } = useMutation({
-    mutationFn: signIn,
-  });
-
+  const { mutateAsync: authenticate } = useMutation({ mutationFn: signIn });
   const { signIn: saveAuth } = useAuth();
 
   async function handleSignIn(data: SignInForm) {
     try {
       const response = await authenticate(data);
 
+      if (!response?.token) {
+        toast.error("Token ausente na resposta da API.");
+        return;
+      }
+
       saveAuth({
         user: response.user,
-        token: response.token,
+        accessToken: response.token,
       });
 
       toast.success(`Bem-vindo, ${response.user.name}!`);
-      // ✅ Redirecionar para a dashboard após login
-      navigate("/");
-    } catch (error) {
+      setTimeout(() => navigate("/"), 100);
+    } catch {
       toast.error("Credenciais inválidas.");
     }
   }
@@ -56,7 +56,6 @@ export function SignIn() {
   return (
     <>
       <Helmet title="Login" />
-
       <center>
         <div className="flex-1 overflow-hidden mt-6">
           <img
@@ -66,6 +65,7 @@ export function SignIn() {
           />
         </div>
       </center>
+
       <div className="p-24">
         <div className="flex w-[350px] flex-col justify-center gap-6">
           <div className="flex flex-col gap-2 text-center">

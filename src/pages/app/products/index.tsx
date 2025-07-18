@@ -1,26 +1,26 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { ProductTable } from '@/components/ProductTable'
-import { deleteProduct, getProducts } from '@/services/products'
-import { Product } from '@/types/product'
+import { ProductTable } from "@/components/ProductTable";
+import { deleteProduct, getProducts } from "@/services/products";
+import { Product } from "@/types/product";
 
 export default function ProductListPage() {
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    loadProducts()
-  }, [])
+    loadProducts();
+  }, []);
 
   async function loadProducts() {
-    const data = await getProducts()
-    setProducts(data)
+    const data = await getProducts();
+    setProducts(data);
   }
 
   async function handleDelete(id: string) {
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
-      await deleteProduct(id)
-      loadProducts()
+    if (confirm("Tem certeza que deseja excluir este produto?")) {
+      await deleteProduct(id);
+      loadProducts();
     }
   }
 
@@ -37,5 +37,5 @@ export default function ProductListPage() {
       </div>
       <ProductTable products={products} onDelete={handleDelete} />
     </div>
-  )
+  );
 }
