@@ -29,28 +29,27 @@ export function ProductList() {
   const { user } = useAuth();
 
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
   const { data, isLoading, error } = useQuery<ProductResponse>({
-    queryKey: ["products", page, search],
+    queryKey: ["products", page, query],
     enabled: !!user,
     queryFn: async () => {
-      try {
-        const response = await api.get("/products", {
-          params: {
-            page,
-            query: search,
-          },
-        });
+      const response = await api.get("/products/search", {
+        params: {
+          page,
+          query,
+          pageSize: 5,
+        },
+      });
 
-        return Array.isArray(response.data)
-          ? { products: response.data, totalPages: 1, currentPage: 1 }
-          : response.data;
-      } catch (err) {
-        // Isso permite que o `useQuery` capture o erro
-        throw new Error("Erro ao buscar produtos");
-      }
+      const totalPages = Math.ceil(response.data.total / 5);
+      return {
+        products: response.data.products,
+        totalPages,
+        currentPage: page,
+      };
     },
   });
 
@@ -66,7 +65,7 @@ export function ProductList() {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     setPage(1); // Resetar para a primeira página ao buscar
-    setSearch(searchInput);
+    setQuery(searchInput);
   }
 
   if (isLoading) return <p>Carregando produtos...</p>;
