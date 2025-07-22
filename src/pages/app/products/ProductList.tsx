@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,14 +14,13 @@ type Product = {
   status: boolean;
   cashback_percentage: number;
   image: string;
-  subcategory: {
-    id: string;
-    name: string;
-    category: {
-      id: string;
-      name: string;
-    };
-  };
+  subcategory?: { id: string; name: string };
+};
+
+type ProductResponse = {
+  products: Product[];
+  totalPages: number;
+  currentPage: number;
 };
 
 export function ProductList() {
@@ -28,15 +28,29 @@ export function ProductList() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  const { data: products, isLoading } = useQuery<Product[]>({
-    queryKey: ["products"],
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+
+  const { data, isLoading, error } = useQuery<ProductResponse>({
+    queryKey: ["products", page, search],
     enabled: !!user,
     queryFn: async () => {
-      const response = await api.get("/products");
-      console.log("🟢 Dados brutos da API:", response.data);
-      return Array.isArray(response.data)
-        ? response.data
-        : response.data.products;
+      try {
+        const response = await api.get("/products", {
+          params: {
+            page,
+            query: search,
+          },
+        });
+
+        return Array.isArray(response.data)
+          ? { products: response.data, totalPages: 1, currentPage: 1 }
+          : response.data;
+      } catch (err) {
+        // Isso permite que o `useQuery` capture o erro
+        throw new Error("Erro ao buscar produtos");
+      }
     },
   });
 
@@ -49,11 +63,44 @@ export function ProductList() {
     },
   });
 
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setPage(1); // Resetar para a primeira página ao buscar
+    setSearch(searchInput);
+  }
+
   if (isLoading) return <p>Carregando produtos...</p>;
+
+  if (error) {
+    return (
+      <div className="p-4 text-red-600">
+        <p className="text-lg font-semibold mb-2">
+          ⚠️ Problemas ao carregar os produtos.
+        </p>
+        <p className="text-sm">
+          Isso geralmente acontece quando o token de acesso expirou. Por favor,
+          faça login novamente.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Lista de Produtos</h1>
+
+      <form onSubmit={handleSearch} className="mb-4 flex gap-2">
+        <input
+          type="text"
+          placeholder="Buscar por nome..."
+          className="border p-2 rounded w-full max-w-md"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Buscar
+        </button>
+      </form>
 
       <table className="min-w-full bg-white shadow-md rounded border">
         <thead className="bg-gray-100">
@@ -61,7 +108,6 @@ export function ProductList() {
             <th className="p-3 text-left">Imagem</th>
             <th className="p-3 text-left">Nome</th>
             <th className="text-left p-3">Subcategoria</th>
-
             <th className="p-3 text-left">Descrição</th>
             <th className="p-3 text-left">Preço</th>
             <th className="p-3 text-left">Estoque</th>
@@ -71,7 +117,7 @@ export function ProductList() {
           </tr>
         </thead>
         <tbody>
-          {products?.map((product) => (
+          {data?.products?.map((product) => (
             <tr
               key={product.id}
               className={`border-b ${
@@ -92,9 +138,7 @@ export function ProductList() {
                 )}
               </td>
               <td className="p-3">{product.name}</td>
-
               <td className="p-3">{product.subcategory?.name ?? "–"}</td>
-
               <td className="p-3">{product.description}</td>
               <td className="p-3">R$ {parseFloat(product.price).toFixed(2)}</td>
               <td className="p-3">{product.quantity}</td>
@@ -120,6 +164,27 @@ export function ProductList() {
           ))}
         </tbody>
       </table>
+
+      {/* Paginação */}
+      <div className="flex justify-between items-center mt-4">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((prev) => prev - 1)}
+          className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
+        >
+          Anterior
+        </button>
+        <span>
+          Página {data?.currentPage} de {data?.totalPages}
+        </span>
+        <button
+          disabled={page === data?.totalPages}
+          onClick={() => setPage((prev) => prev + 1)}
+          className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
+        >
+          Próxima
+        </button>
+      </div>
     </div>
   );
 }

@@ -8,8 +8,8 @@ import { Dashboard } from "@/pages/app/dashboard/dashboard";
 import { Orders } from "@/pages/app/orders/orders";
 import { PendingOrdersPage } from "@/pages/app/orders/pending/PendingOrdersPage";
 import { ProductEdit } from "@/pages/app/products/ProductEdit";
-import { ProductForm } from "@/pages/app/products/ProductForm";
 import { ProductList } from "@/pages/app/products/ProductList";
+import { ProductNew } from "@/pages/app/products/ProductNew";
 import { SignIn } from "@/pages/auth/sign-in";
 import { SignUp } from "@/pages/auth/sign-up";
 import { Error } from "@/pages/error";
@@ -38,7 +38,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "produtos/novo",
-        element: <ProductForm />,
+        element: <ProductNew />,
       },
       {
         path: "produtos/editar/:id",

@@ -1,7 +1,7 @@
+// src/pages/ProductNew.tsx
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { api } from "@/lib/axios";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
@@ -12,8 +12,14 @@ type ProductFormData = {
   price: number;
   quantity: number;
   image?: string;
+  store_id: string;
   subcategory_id: string;
   cashback_percentage: number;
+};
+
+type Store = {
+  id: string;
+  name: string;
 };
 
 type Subcategory = {
@@ -21,15 +27,13 @@ type Subcategory = {
   name: string;
 };
 
-export function ProductEdit() {
-  const { id } = useParams<{ id: string }>();
+export function ProductNew() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const {
     register,
     handleSubmit,
-    reset,
     watch,
     setValue,
     formState: { isSubmitting },
@@ -37,43 +41,29 @@ export function ProductEdit() {
 
   const imageUrl = watch("image");
 
+  const { data: stores = [] } = useQuery<Store[]>({
+    queryKey: ["stories"],
+    queryFn: async () => {
+      const response = await api.get("/stores");
+      return Array.isArray(response.data)
+        ? response.data
+        : response.data.stores ?? []; // prettier-ignore
+    },
+  });
+
   const { data: subcategories = [] } = useQuery<Subcategory[]>({
     queryKey: ["subcategories"],
     queryFn: async () => {
       const response = await api.get("/subcategories");
-      console.log("🔍 Resposta bruta da API /subcategories:", response.data);
       return Array.isArray(response.data)
         ? response.data
         : response.data.subcategories ?? []; // prettier-ignore
     },
   });
 
-  // prettier-ignore
-  const { data: product, isLoading, error } = useQuery<ProductFormData>({
-    queryKey: ["product", id],
-    enabled: !!id,
-    queryFn: async () => {
-      const response = await api.get(`/products/${id}`);
-      const data = response.data;
-
-      return {
-        ...data,
-        price: Number(data.price),
-        quantity: Number(data.quantity),
-        cashback_percentage: Number(data.cashback_percentage),
-      };
-    },
-  });
-
-  useEffect(() => {
-    if (product) {
-      reset(product);
-    }
-  }, [product, reset]);
-
-  const { mutateAsync: updateProduct } = useMutation({
+  const { mutateAsync: createProduct } = useMutation({
     mutationFn: async (data: ProductFormData) => {
-      await api.patch(`/products/${id}`, data);
+      await api.post("/products", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -88,8 +78,9 @@ export function ProductEdit() {
       quantity: Number(data.quantity),
       cashback_percentage: Number(data.cashback_percentage),
     };
+    console.log("🔍 Enviando dados para criação:", payload);
 
-    await updateProduct(payload);
+    await createProduct(payload);
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -99,12 +90,9 @@ export function ProductEdit() {
     setValue("image", url);
   }
 
-  if (isLoading) return <p>Carregando produto...</p>;
-  if (error) return <p>Erro ao carregar produto.</p>;
-
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Editar Produto</h1>
+      <h1 className="text-2xl font-bold mb-4">Novo Produto</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="block text-sm font-semibold">Nome</label>
@@ -113,6 +101,22 @@ export function ProductEdit() {
             className="w-full border p-2 rounded"
             required
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold">Loja</label>
+          <select
+            {...register("store_id")}
+            className="w-full border p-2 rounded"
+            required
+          >
+            <option value="">Selecione uma Loja</option>
+            {stores.map((store) => (
+              <option key={store.id} value={store.id}>
+                {store.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -151,9 +155,7 @@ export function ProductEdit() {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold">
-            Estoque (quantidade)
-          </label>
+          <label className="block text-sm font-semibold">Estoque</label>
           <input
             type="number"
             {...register("quantity")}
@@ -195,7 +197,7 @@ export function ProductEdit() {
           disabled={isSubmitting}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          {isSubmitting ? "Salvando..." : "Salvar alterações"}
+          {isSubmitting ? "Salvando..." : "Criar produto"}
         </button>
       </form>
     </div>

@@ -20,3 +20,20 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+
+// 🔴 Interceptor de resposta para tratar erros 401 (não autorizado)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn(
+        "⚠️ Token expirado ou inválido. Redirecionando para login..."
+      );
+
+      localStorage.clear(); // remove tokens e user do storage
+      window.location.href = "/sign-in"; // redireciona
+    }
+
+    return Promise.reject(error);
+  }
+);
