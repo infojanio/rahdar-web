@@ -42,7 +42,7 @@ export function ProductNew() {
   const imageUrl = watch("image");
 
   const { data: stores = [] } = useQuery<Store[]>({
-    queryKey: ["stories"],
+    queryKey: ["stores"],
     queryFn: async () => {
       const response = await api.get("/stores");
       return Array.isArray(response.data)
@@ -67,6 +67,7 @@ export function ProductNew() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+      alert("✅ Cadastrado com sucesso!");
       navigate("/produtos");
     },
   });

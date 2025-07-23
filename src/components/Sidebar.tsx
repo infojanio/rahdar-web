@@ -23,7 +23,18 @@ export function Sidebar() {
       </div>
 
       <div>
-        <h3 className="font-semibold text-sm mb-2">📢 Banners</h3>
+        <h3 className="font-semibold text-sm mb-2 mt-8">📢 SubCategorias</h3>
+        <ul className="space-y-1 text-sm">
+          <li>
+            <NavLink to="/subcategories/novo" className="hover:underline">
+              ➕ Adicionar
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="font-semibold text-sm mb-2 mt-8">📢 Banners</h3>
         <ul className="space-y-1 text-sm">
           <li>
             <NavLink to="/banners/novo" className="hover:underline">

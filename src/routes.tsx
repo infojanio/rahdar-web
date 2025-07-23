@@ -14,6 +14,8 @@ import { SignIn } from "@/pages/auth/sign-in";
 import { SignUp } from "@/pages/auth/sign-up";
 import { Error } from "@/pages/error";
 
+import { SubcategoryNew } from "./pages/app/subcategories/SubcategoryNew";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -43,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: "produtos/editar/:id",
         element: <ProductEdit />,
+      },
+      {
+        path: "subcategories/novo",
+        element: <SubcategoryNew />,
       },
     ],
   },
