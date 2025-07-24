@@ -27,7 +27,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       console.warn(
-        "⚠️ Token expirado ou inválido. Redirecionando para login..."
+        "⚠️ Token expirado ou inválido. Redirecionando para login..." // prettier-ignore
       );
 
       localStorage.clear(); // remove tokens e user do storage
@@ -35,5 +35,5 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  } // prettier-ignore
 );

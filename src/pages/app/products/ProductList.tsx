@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -14,7 +15,14 @@ type Product = {
   status: boolean;
   cashback_percentage: number;
   image: string;
-  subcategory?: { id: string; name: string };
+  subcategory?: {
+    id: string;
+    name: string;
+    category?: {
+      id: string;
+      name: string;
+    };
+  };
 };
 
 type ProductResponse = {
@@ -43,7 +51,7 @@ export function ProductList() {
           pageSize: 5,
         },
       });
-
+      console.log("Produtos:", response.data);
       const totalPages = Math.ceil(response.data.total / 5);
       return {
         products: response.data.products,
@@ -106,7 +114,8 @@ export function ProductList() {
           <tr>
             <th className="p-3 text-left">Imagem</th>
             <th className="p-3 text-left">Nome</th>
-            <th className="text-left p-3">Subcategoria</th>
+            <th className="text-left p-3">Categoria</th>
+
             <th className="p-3 text-left">Descrição</th>
             <th className="p-3 text-left">Preço</th>
             <th className="p-3 text-left">Estoque</th>
@@ -137,7 +146,10 @@ export function ProductList() {
                 )}
               </td>
               <td className="p-3">{product.name}</td>
-              <td className="p-3">{product.subcategory?.name ?? "–"}</td>
+              <td className="p-3">
+                {product.subcategory?.category?.name ?? "–"} /{" "}
+                {product.subcategory?.name ?? "–"}
+              </td>
               <td className="p-3">{product.description}</td>
               <td className="p-3">R$ {parseFloat(product.price).toFixed(2)}</td>
               <td className="p-3">{product.quantity}</td>
@@ -146,16 +158,19 @@ export function ProductList() {
               <td className="p-3 space-x-2">
                 <button
                   onClick={() => navigate(`/produtos/editar/${product.id}`)}
-                  className="text-blue-600 hover:underline text-sm"
+                  className="text-blue-600 hover:text-blue-800"
+                  title="Editar"
                 >
-                  Editar
+                  <Pencil size={18} />
                 </button>
+
                 {product.status && (
                   <button
                     onClick={() => disableProduct(product.id)}
-                    className="text-red-600 hover:underline text-sm"
+                    className="text-red-600 hover:text-red-800"
+                    title="Desativar"
                   >
-                    Desativar
+                    <Trash2 size={18} />
                   </button>
                 )}
               </td>
