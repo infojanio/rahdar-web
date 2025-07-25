@@ -9,24 +9,19 @@ import { api } from "@/lib/axios";
 type Product = {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   price: string;
   quantity: number;
   status: boolean;
   cashback_percentage: number;
   image: string;
-  subcategory?: {
-    id: string;
-    name: string;
-    category?: {
-      id: string;
-      name: string;
-    };
-  };
+  subcategoryName: string | null;
+  categoryName: string | null;
 };
 
 type ProductResponse = {
   products: Product[];
+  total: number;
   totalPages: number;
   currentPage: number;
 };
@@ -51,10 +46,12 @@ export function ProductList() {
           pageSize: 5,
         },
       });
-      console.log("Produtos:", response.data);
+
       const totalPages = Math.ceil(response.data.total / 5);
+
       return {
         products: response.data.products,
+        total: response.data.total,
         totalPages,
         currentPage: page,
       };
@@ -72,7 +69,7 @@ export function ProductList() {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    setPage(1); // Resetar para a primeira página ao buscar
+    setPage(1); // Resetar ao buscar
     setQuery(searchInput);
   }
 
@@ -85,8 +82,8 @@ export function ProductList() {
           ⚠️ Problemas ao carregar os produtos.
         </p>
         <p className="text-sm">
-          Isso geralmente acontece quando o token de acesso expirou. Por favor,
-          faça login novamente.
+          Isso geralmente acontece quando o token de acesso expirou. Faça login
+          novamente.
         </p>
       </div>
     );
@@ -114,7 +111,6 @@ export function ProductList() {
           <tr>
             <th className="p-3 text-left">Imagem</th>
             <th className="p-3 text-left">Nome</th>
-            <th className="text-left p-3">Categoria</th>
 
             <th className="p-3 text-left">Descrição</th>
             <th className="p-3 text-left">Preço</th>
@@ -146,10 +142,7 @@ export function ProductList() {
                 )}
               </td>
               <td className="p-3">{product.name}</td>
-              <td className="p-3">
-                {product.subcategory?.category?.name ?? "–"} /{" "}
-                {product.subcategory?.name ?? "–"}
-              </td>
+
               <td className="p-3">{product.description}</td>
               <td className="p-3">R$ {parseFloat(product.price).toFixed(2)}</td>
               <td className="p-3">{product.quantity}</td>

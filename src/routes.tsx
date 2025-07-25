@@ -8,12 +8,13 @@ import { Dashboard } from "@/pages/app/dashboard/dashboard";
 import { Orders } from "@/pages/app/orders/orders";
 import { PendingOrdersPage } from "@/pages/app/orders/pending/PendingOrdersPage";
 import { ProductEdit } from "@/pages/app/products/ProductEdit";
-import { ProductList } from "@/pages/app/products/ProductList";
+import { ProductListAll } from "@/pages/app/products/ProductListAll";
 import { ProductNew } from "@/pages/app/products/ProductNew";
 import { SignIn } from "@/pages/auth/sign-in";
 import { SignUp } from "@/pages/auth/sign-up";
 import { Error } from "@/pages/error";
 
+import { ProductList } from "./pages/app/products/ProductList";
 import { SubcategoryNew } from "./pages/app/subcategories/SubcategoryNew";
 
 export const router = createBrowserRouter([
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
       {
         path: "produtos",
         element: <ProductList />,
+      },
+      {
+        path: "produtos/todos",
+        element: <ProductListAll />,
       },
       {
         path: "produtos/novo",
