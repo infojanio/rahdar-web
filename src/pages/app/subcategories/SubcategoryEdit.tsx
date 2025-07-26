@@ -1,7 +1,7 @@
-// src/pages/app/subcategories/SubcategoryNew.tsx
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { api } from "@/lib/axios";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
@@ -17,13 +17,15 @@ type Category = {
   name: string;
 };
 
-export function SubcategoryNew() {
+export function SubcategoryEdit() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const {
     register,
     handleSubmit,
+    reset,
     watch,
     setValue,
     formState: { isSubmitting },
@@ -35,25 +37,50 @@ export function SubcategoryNew() {
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await api.get("/categories");
+      console.log("🔍 Resposta bruta da API /categories:", response.data);
       return Array.isArray(response.data)
         ? response.data
         : response.data.categories ?? []; // prettier-ignore
     },
   });
 
-  const { mutateAsync: createSubcategory } = useMutation({
+  // prettier-ignore
+  const { data: subcategory, isLoading, error } = useQuery<SubcategoryFormData>({
+    queryKey: ["subcategory", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const response = await api.get(`/subcategories/${id}`);
+      const data = response.data;
+
+      return {
+        ...data,
+        };
+    },
+  });
+
+  useEffect(() => {
+    if (subcategory) {
+      reset(subcategory);
+    }
+  }, [subcategory, reset]);
+
+  const { mutateAsync: updateSubcategory } = useMutation({
     mutationFn: async (data: SubcategoryFormData) => {
-      await api.post("/subcategories", data);
+      await api.patch(`/subcategories/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subcategories"] });
-      alert("✅ Cadastrado com sucesso!");
+      alert("✅ Atualizado com sucesso!");
       navigate("/subcategorias/todos");
     },
   });
 
   async function onSubmit(data: SubcategoryFormData) {
-    await createSubcategory(data);
+    const payload = {
+      ...data,
+    };
+
+    await updateSubcategory(payload);
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -63,9 +90,12 @@ export function SubcategoryNew() {
     setValue("image", url);
   }
 
+  if (isLoading) return <p>Carregando subcategoria...</p>;
+  if (error) return <p>Erro ao carregar subcategoria.</p>;
+
   return (
-    <div className="max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Nova Subcategoria</h1>
+    <div className="max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Editar Subcategoria</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="block text-sm font-semibold">Nome</label>
@@ -112,9 +142,9 @@ export function SubcategoryNew() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          {isSubmitting ? "Salvando..." : "Criar subcategoria"}
+          {isSubmitting ? "Salvando..." : "Salvar alterações"}
         </button>
       </form>
     </div>

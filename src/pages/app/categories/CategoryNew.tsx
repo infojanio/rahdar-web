@@ -1,23 +1,17 @@
 // src/pages/app/subcategories/SubcategoryNew.tsx
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { api } from "@/lib/axios";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 
-type SubcategoryFormData = {
+type CategoryFormData = {
   name: string;
   image?: string;
-  category_id: string;
 };
 
-type Category = {
-  id: string;
-  name: string;
-};
-
-export function SubcategoryNew() {
+export function CategoryNew() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -27,33 +21,23 @@ export function SubcategoryNew() {
     watch,
     setValue,
     formState: { isSubmitting },
-  } = useForm<SubcategoryFormData>();
+  } = useForm<CategoryFormData>();
 
   const imageUrl = watch("image");
 
-  const { data: categories = [] } = useQuery<Category[]>({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const response = await api.get("/categories");
-      return Array.isArray(response.data)
-        ? response.data
-        : response.data.categories ?? []; // prettier-ignore
-    },
-  });
-
-  const { mutateAsync: createSubcategory } = useMutation({
-    mutationFn: async (data: SubcategoryFormData) => {
-      await api.post("/subcategories", data);
+  const { mutateAsync: createCategory } = useMutation({
+    mutationFn: async (data: CategoryFormData) => {
+      await api.post("/categories", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["subcategories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
       alert("✅ Cadastrado com sucesso!");
-      navigate("/subcategorias/todos");
+      navigate("/categorias/todos");
     },
   });
 
-  async function onSubmit(data: SubcategoryFormData) {
-    await createSubcategory(data);
+  async function onSubmit(data: CategoryFormData) {
+    await createCategory(data);
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -65,7 +49,7 @@ export function SubcategoryNew() {
 
   return (
     <div className="max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Nova Subcategoria</h1>
+      <h1 className="text-2xl font-bold mb-4">Nova Categoria</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="block text-sm font-semibold">Nome</label>
@@ -74,22 +58,6 @@ export function SubcategoryNew() {
             className="w-full border p-2 rounded"
             required
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold">Categoria</label>
-          <select
-            {...register("category_id")}
-            className="w-full border p-2 rounded"
-            required
-          >
-            <option value="">Selecione uma categoria</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div>

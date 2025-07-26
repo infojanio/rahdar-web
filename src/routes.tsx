@@ -14,7 +14,12 @@ import { SignIn } from "@/pages/auth/sign-in";
 import { SignUp } from "@/pages/auth/sign-up";
 import { Error } from "@/pages/error";
 
+import { CategoryEdit } from "./pages/app/categories/CategoryEdit";
+import { CategoryList } from "./pages/app/categories/CategoryList";
+import { CategoryNew } from "./pages/app/categories/CategoryNew";
 import { ProductList } from "./pages/app/products/ProductList";
+import { SubcategoryEdit } from "./pages/app/subcategories/SubcategoryEdit";
+import { SubcategoryList } from "./pages/app/subcategories/SubcategoryList";
 import { SubcategoryNew } from "./pages/app/subcategories/SubcategoryNew";
 
 export const router = createBrowserRouter([
@@ -52,8 +57,28 @@ export const router = createBrowserRouter([
         element: <ProductEdit />,
       },
       {
-        path: "subcategories/novo",
+        path: "categorias/todos",
+        element: <CategoryList />,
+      },
+      {
+        path: "categorias/novo",
+        element: <CategoryNew />,
+      },
+      {
+        path: "categorias/editar/:id",
+        element: <CategoryEdit />,
+      },
+      {
+        path: "subcategorias/todos",
+        element: <SubcategoryList />,
+      },
+      {
+        path: "subcategorias/novo",
         element: <SubcategoryNew />,
+      },
+      {
+        path: "subcategorias/editar/:id",
+        element: <SubcategoryEdit />,
       },
     ],
   },

@@ -11,18 +11,34 @@ export function Sidebar() {
         <ul className="space-y-1 text-sm">
           <li>
             <NavLink to="/produtos/novo" className="hover:underline">
-              ➕ Adicionar
+              ➕ Novo
             </NavLink>
           </li>
 
+          <li>
+            <NavLink to="/produtos" className="hover:underline">
+              📝 Editar / Desativar
+            </NavLink>
+          </li>
           <li>
             <NavLink to="/produtos/todos" className="hover:underline">
               📝 Listar Todos
             </NavLink>
           </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="font-semibold text-sm mb-2 mt-8">📢 Categorias</h3>
+        <ul className="space-y-1 text-sm">
           <li>
-            <NavLink to="/produtos" className="hover:underline">
-              📝 Buscar
+            <NavLink to="/categorias/novo" className="hover:underline">
+              ➕ Adicionar
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/categorias/todos" className="hover:underline">
+              📝 Editar
             </NavLink>
           </li>
         </ul>
@@ -32,8 +48,13 @@ export function Sidebar() {
         <h3 className="font-semibold text-sm mb-2 mt-8">📢 SubCategorias</h3>
         <ul className="space-y-1 text-sm">
           <li>
-            <NavLink to="/subcategories/novo" className="hover:underline">
+            <NavLink to="/subcategorias/novo" className="hover:underline">
               ➕ Adicionar
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/subcategorias/todos" className="hover:underline">
+              📝 Editar
             </NavLink>
           </li>
         </ul>

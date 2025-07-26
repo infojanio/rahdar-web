@@ -1,6 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil, XCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/axios";
@@ -25,8 +23,6 @@ type Product = {
 };
 
 export function ProductListAll() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { user } = useAuth();
 
   const { data: products, isLoading } = useQuery<Product[]>({
@@ -37,15 +33,6 @@ export function ProductListAll() {
       return Array.isArray(response.data)
         ? response.data
         : response.data.products;
-    },
-  });
-
-  const { mutateAsync: disableProduct } = useMutation({
-    mutationFn: async (id: string) => {
-      await api.patch(`/products/${id}/disable`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
@@ -71,7 +58,6 @@ export function ProductListAll() {
               <th className="p-4 text-left">Estoque</th>
               <th className="p-4 text-left">Cashback</th>
               <th className="p-4 text-left">Status</th>
-              <th className="p-4 text-left">Ações</th>
             </tr>
           </thead>
           <tbody className="text-gray-700 text-sm divide-y divide-gray-200">
@@ -115,22 +101,6 @@ export function ProductListAll() {
                     <span className="inline-block px-2 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
                       Inativo
                     </span>
-                  )}
-                </td>
-                <td className="p-4 space-x-2 flex items-center">
-                  <button
-                    onClick={() => navigate(`/produtos/editar/${product.id}`)}
-                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-                  >
-                    <Pencil className="w-4 h-4" /> Editar
-                  </button>
-                  {product.status && (
-                    <button
-                      onClick={() => disableProduct(product.id)}
-                      className="flex items-center gap-1 text-sm text-red-600 hover:text-red-800"
-                    >
-                      <XCircle className="w-4 h-4" /> Desativar
-                    </button>
                   )}
                 </td>
               </tr>
