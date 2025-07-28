@@ -35,9 +35,7 @@ export function usePendingOrders() {
   return useQuery<FetchPendingOrdersResponse>({
     queryKey: ["orders", "pending"],
     queryFn: async () => {
-      const response = await api.get("/orders", {
-        params: { status: "PENDING" },
-      });
+      const response = await api.get("/orders/");
       return response.data;
     },
     refetchOnWindowFocus: true,

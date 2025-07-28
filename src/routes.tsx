@@ -17,6 +17,9 @@ import { Error } from "@/pages/error";
 import { CategoryEdit } from "./pages/app/categories/CategoryEdit";
 import { CategoryList } from "./pages/app/categories/CategoryList";
 import { CategoryNew } from "./pages/app/categories/CategoryNew";
+import { OrderDetailsPage } from "./pages/app/orders/OrderDetailsPage";
+import { OrderHistoryPage } from "./pages/app/orders/OrderHistoryPage";
+import { OrderValidationPage } from "./pages/app/orders/OrderValidatePage";
 import { ProductList } from "./pages/app/products/ProductList";
 import { SubcategoryEdit } from "./pages/app/subcategories/SubcategoryEdit";
 import { SubcategoryList } from "./pages/app/subcategories/SubcategoryList";
@@ -79,6 +82,18 @@ export const router = createBrowserRouter([
       {
         path: "subcategorias/editar/:id",
         element: <SubcategoryEdit />,
+      },
+      {
+        path: "/historico-pedidos",
+        element: <OrderHistoryPage />,
+      },
+      {
+        path: "/pedidos/:orderId",
+        element: <OrderDetailsPage />,
+      },
+      {
+        path: "/pedidos/validar",
+        element: <OrderValidationPage />,
       },
     ],
   },

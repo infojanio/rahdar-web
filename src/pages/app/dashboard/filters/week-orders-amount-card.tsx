@@ -1,12 +1,12 @@
-import { CalendarCheck } from 'lucide-react'
+import { CalendarCheck } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useWeekOrdersAmount } from '@/hooks/use-week-orders-amount'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useWeekOrdersAmount } from "@/hooks/use-week-orders-amount";
 
-import { MetricCardSkeleton } from './metric-card-skeleton'
+import { MetricCardSkeleton } from "./metric-card-skeleton";
 
 export function WeekOrdersAmountCard() {
-  const { data: weekOrdersAmount, isLoading } = useWeekOrdersAmount()
+  const { data: weekOrdersAmount, isLoading } = useWeekOrdersAmount();
 
   return (
     <Card>
@@ -22,21 +22,21 @@ export function WeekOrdersAmountCard() {
         ) : (
           <>
             <span className="text-2xl font-bold tracking-tight">
-              {weekOrdersAmount.amount.toLocaleString('pt-BR')}
+              {weekOrdersAmount.amount.toLocaleString("pt-BR")}
             </span>
             <p className="text-xs text-muted-foreground">
               {weekOrdersAmount.diffFromLastWeek >= 0 ? (
                 <>
                   <span className="text-emerald-500 dark:text-emerald-400">
                     +{weekOrdersAmount.diffFromLastWeek}%
-                  </span>{' '}
+                  </span>{" "}
                   em relação à semana passada
                 </>
               ) : (
                 <>
                   <span className="text-rose-500 dark:text-rose-400">
                     {weekOrdersAmount.diffFromLastWeek}%
-                  </span>{' '}
+                  </span>{" "}
                   em relação à semana passada
                 </>
               )}
@@ -45,5 +45,5 @@ export function WeekOrdersAmountCard() {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

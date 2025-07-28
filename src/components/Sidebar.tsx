@@ -61,6 +61,17 @@ export function Sidebar() {
       </div>
 
       <div>
+        <h3 className="font-semibold text-sm mb-2 mt-8">📢 Pedidos</h3>
+        <ul className="space-y-1 text-sm">
+          <li>
+            <NavLink to="/pedidos/validar" className="hover:underline">
+              📝 Aprovar
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+
+      <div>
         <h3 className="font-semibold text-sm mb-2 mt-8">📢 Banners</h3>
         <ul className="space-y-1 text-sm">
           <li>
