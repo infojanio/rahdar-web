@@ -83,14 +83,7 @@ export const router = createBrowserRouter([
         path: "subcategorias/editar/:id",
         element: <SubcategoryEdit />,
       },
-      {
-        path: "/historico-pedidos",
-        element: <OrderHistoryPage />,
-      },
-      {
-        path: "/pedidos/:orderId",
-        element: <OrderDetailsPage />,
-      },
+
       {
         path: "/pedidos/validar",
         element: <OrderValidationPage />,
