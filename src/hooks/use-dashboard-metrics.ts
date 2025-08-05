@@ -16,6 +16,16 @@ export interface DashboardMetrics {
     cashback: number;
     userName: string;
     storeName: string;
+    status: string;
+    validatedAt: string;
+  }[];
+  latestPendingOrders: {
+    id: string;
+    total: number;
+    cashback: number;
+    userName: string;
+    storeName: string;
+    status: string;
     validatedAt: string;
   }[];
   topUsers: { id: string; email: string; name: string; total: number }[];

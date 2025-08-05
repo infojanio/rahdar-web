@@ -16,7 +16,7 @@ export function CashbackUsedCard() {
         <span className="text-2xl font-bold text-red-600">
           {isLoading
             ? "..."
-            : `R$ -${data?.totalCashbackUsed?.toFixed(2) ?? "0.00"}`}
+            : `R$ ${data?.totalCashbackUsed?.toFixed(2) ?? "0.00"}`}
         </span>
       </CardContent>
     </Card>

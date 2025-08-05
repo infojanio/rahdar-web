@@ -1,12 +1,13 @@
 // src/pages/app/dashboard/tables/LatestOrdersTable.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { usePendingOrders } from "@/hooks/use-pending-orders";
+import { useDashboardMetrics } from "@/hooks/use-dashboard-metrics";
 import { formatDate } from "@/utils/format-date";
 
-export function LatestOrdersPendingTable() {
-  const { data, isLoading } = usePendingOrders();
-  const orders = (data?.orders ?? []).filter(
-    (order) => order.status === "PENDING" // prettier-ignore
+export function LatestOrdersTable() {
+  const { data, isLoading } = useDashboardMetrics();
+  // Usa os dados já prontos da API
+  const orders = (data?.latestPendingOrders ?? []).filter(
+    (order) => order.status === "PENDING"
   );
 
   return (
@@ -20,8 +21,8 @@ export function LatestOrdersPendingTable() {
             <thead>
               <tr className="border-b border-muted">
                 <th className="px-4 py-2 text-left">Cliente</th>
-                <th className="px-4 py-2 text-right">Desconto</th>
-                <th className="px-4 py-2 text-right">Total</th>
+                <th className="px-4 py-2 text-left">Loja</th>
+                <th className="px-4 py-2 text-right">Valor</th>
                 <th className="px-4 py-2 text-right">Data</th>
               </tr>
             </thead>
@@ -47,16 +48,14 @@ export function LatestOrdersPendingTable() {
               ) : (
                 orders.map((order) => (
                   <tr key={order.id} className="border-b border-muted">
-                    <td className="px-4 py-2 font-medium">{order.user_name}</td>
+                    <td className="px-4 py-2 font-medium">{order.userName}</td>
+                    <td className="px-4 py-2">{order.storeName}</td>
+                    <td className="px-4 py-2 text-right">
+                      R$ {order.total.toFixed(2)}
+                    </td>
 
-                    <td className="px-4 py-2">
-                      {order.discountApplied.toFixed(2)}
-                    </td>
                     <td className="px-4 py-2 text-right">
-                      R$ {order.totalAmount.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-2 text-right">
-                      {formatDate(order.createdAt)}
+                      {formatDate(order.validatedAt)}
                     </td>
                   </tr>
                 ))

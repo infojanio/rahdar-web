@@ -5,6 +5,7 @@ import { CashbackGeneratedCard } from "./cards/CashbackGeneratedCard";
 import { CashbackUsedCard } from "./cards/CashbackUsedCard";
 import { TotalUsersCard } from "./cards/TotalUsersCard";
 import { CashbackByMonthChart } from "./charts/CashbackByMonthChart";
+import { LatestOrdersPendingTable } from "./charts/LatestOrdersPendingTable";
 import { LatestOrdersTable } from "./charts/LatestOrdersTable";
 import { TopProductsTable } from "./charts/TopProductsTable";
 import { TopUsersTable } from "./charts/TopUsersTable";
@@ -35,6 +36,7 @@ export function Dashboard() {
           <TopUsersTable />
           <TopProductsTable />
           <LatestOrdersTable />
+          <LatestOrdersPendingTable />
         </div>
       </div>
     </>

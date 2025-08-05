@@ -1,10 +1,23 @@
 // src/components/Sidebar.tsx
 import { NavLink } from "react-router-dom";
 
+import { useAuth } from "@/contexts/AuthContext";
+
+import { Button } from "./ui/button";
+
 export function Sidebar() {
+  const { signOut } = useAuth();
+
   return (
     <aside className="w-64 h-screen bg-gray-900 text-white p-4">
       <h2 className="text-xl font-bold mb-6">Menu</h2>
+      <div className="mb-6">
+        <li>
+          <NavLink to="/" className="hover:underline">
+            🔙 Início
+          </NavLink>
+        </li>
+      </div>
 
       <div className="mb-4">
         <h3 className="font-semibold text-sm mb-2">🛒 Produtos</h3>
@@ -22,14 +35,14 @@ export function Sidebar() {
           </li>
           <li>
             <NavLink to="/produtos/todos" className="hover:underline">
-              📝 Listar Todos
+              🧾 Lista completa
             </NavLink>
           </li>
         </ul>
       </div>
 
       <div>
-        <h3 className="font-semibold text-sm mb-2 mt-8">📢 Categorias</h3>
+        <h3 className="font-semibold text-sm mb-2 mt-8">🗂 Categorias</h3>
         <ul className="space-y-1 text-sm">
           <li>
             <NavLink to="/categorias/novo" className="hover:underline">
@@ -45,7 +58,7 @@ export function Sidebar() {
       </div>
 
       <div>
-        <h3 className="font-semibold text-sm mb-2 mt-8">📢 SubCategorias</h3>
+        <h3 className="font-semibold text-sm mb-2 mt-8">📤 SubCategorias</h3>
         <ul className="space-y-1 text-sm">
           <li>
             <NavLink to="/subcategorias/novo" className="hover:underline">
@@ -61,11 +74,11 @@ export function Sidebar() {
       </div>
 
       <div>
-        <h3 className="font-semibold text-sm mb-2 mt-8">📢 Pedidos</h3>
+        <h3 className="font-semibold text-sm mb-2 mt-8">📦 Pedidos</h3>
         <ul className="space-y-1 text-sm">
           <li>
             <NavLink to="/pedidos/validar" className="hover:underline">
-              📝 Aprovar
+              ✅ Aprovar
             </NavLink>
           </li>
         </ul>
@@ -83,6 +96,17 @@ export function Sidebar() {
             <NavLink to="/banners" className="hover:underline">
               📝 Editar / Excluir
             </NavLink>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="font-semibold text-sm mb-2 mt-8"> </h3>
+        <ul className="space-y-1 text-sm">
+          <li>
+            <Button variant="ghost" size="sm" onClick={signOut}>
+              ⛔ Sair
+            </Button>
           </li>
         </ul>
       </div>

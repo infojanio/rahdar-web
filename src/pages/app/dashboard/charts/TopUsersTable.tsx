@@ -1,10 +1,10 @@
 // src/pages/app/dashboard/tables/TopUsersTable.tsx
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useDashboardMetrics } from '@/hooks/use-dashboard-metrics'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDashboardMetrics } from "@/hooks/use-dashboard-metrics";
 
 export function TopUsersTable() {
-  const { data, isLoading } = useDashboardMetrics()
-  const users = data?.topUsers ?? []
+  const { data, isLoading } = useDashboardMetrics();
+  const users = data?.topUsers ?? [];
 
   return (
     <Card>
@@ -56,5 +56,5 @@ export function TopUsersTable() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -55,11 +55,12 @@ export function OrderValidationPage() {
       fetchOrders(1, true);
       alert(data.message || "Pedido validado com sucesso!");
     },
+    // prettier-ignore
     onError: (error: any) => {
       const message =
         error?.response?.data?.message || "Erro ao validar o pedido.";
       alert(message);
-    },
+    }
   });
 
   async function fetchOrders(pageNumber = 1, reset = false) {
