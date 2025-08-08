@@ -29,13 +29,13 @@ export function Sidebar() {
           </li>
 
           <li>
-            <NavLink to="/produtos" className="hover:underline">
-              📝 Editar / Desativar
+            <NavLink to="/produtos/todos" className="hover:underline">
+              🧾 Listar
             </NavLink>
           </li>
           <li>
-            <NavLink to="/produtos/todos" className="hover:underline">
-              🧾 Lista completa
+            <NavLink to="/produtos" className="hover:underline">
+              🔎 Buscar
             </NavLink>
           </li>
         </ul>

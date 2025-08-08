@@ -11,6 +11,7 @@ type ProductFormData = {
   description?: string;
   price: number;
   quantity: number;
+  status: boolean;
   image?: string;
   subcategory_id: string;
   cashback_percentage: number;
@@ -85,7 +86,7 @@ export function ProductEdit() {
     const payload = {
       ...data,
       price: Number(data.price),
-      quantity: Number(data.quantity),
+      quantity: Number(data.status ? data.quantity : 0), // Zera estoque se inativo
       cashback_percentage: Number(data.cashback_percentage),
     };
 
@@ -150,6 +151,26 @@ export function ProductEdit() {
           />
         </div>
 
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            {...register("status")}
+            id="status"
+            className="w-4 h-4"
+            onChange={(e) => {
+              const checked = e.target.checked;
+              setValue("status", checked);
+              if (!checked) setValue("quantity", 0); // Produto inativo => zera estoque
+            }}
+          />
+          <label
+            htmlFor="status"
+            className="text-2xl font-semibold from-red-600 space-x-4 border-r-background"
+          >
+            Produto Ativo
+          </label>
+        </div>
+
         <div>
           <label className="block text-sm font-semibold">
             Estoque (quantidade)
@@ -159,6 +180,7 @@ export function ProductEdit() {
             {...register("quantity")}
             className="w-full border p-2 rounded"
             required
+            disabled={!watch("status")} // desabilita se status for false
           />
         </div>
 

@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil, Trash2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -28,7 +28,7 @@ type ProductResponse = {
 
 export function ProductList() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+
   const { user } = useAuth();
 
   const [page, setPage] = useState(1);
@@ -55,15 +55,6 @@ export function ProductList() {
         totalPages,
         currentPage: page,
       };
-    },
-  });
-
-  const { mutateAsync: disableProduct } = useMutation({
-    mutationFn: async (id: string) => {
-      await api.patch(`/products/${id}/disable`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
@@ -156,16 +147,6 @@ export function ProductList() {
                 >
                   <Pencil size={18} />
                 </button>
-
-                {product.status && (
-                  <button
-                    onClick={() => disableProduct(product.id)}
-                    className="text-red-600 hover:text-red-800"
-                    title="Desativar"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                )}
               </td>
             </tr>
           ))}

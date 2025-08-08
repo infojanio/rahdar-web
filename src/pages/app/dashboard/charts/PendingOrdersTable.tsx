@@ -1,7 +1,6 @@
-// src/pages/app/dashboard/charts/PendingOrdersTable.tsx
-
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { CheckCircle, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +18,7 @@ interface Order {
 }
 
 export function PendingOrdersTable() {
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: orders, isLoading } = useQuery<Order[]>({
     queryKey: ["orders", "pending"],
@@ -31,20 +30,11 @@ export function PendingOrdersTable() {
     },
   });
 
-  const { mutateAsync: validateOrder, isPending: isValidating } = useMutation({
-    mutationFn: async (orderId: string) => {
-      await api.patch(`/orders/${orderId}/validate`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["orders", "pending"] });
-    },
-  });
-
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-semibold flex items-center gap-2">
-          <Clock className="w-4 h-4 text-muted-foreground" />
+          <Clock className="w-6 h-6 text-muted-foreground" />
           Pedidos Pendentes
         </CardTitle>
       </CardHeader>
@@ -53,7 +43,7 @@ export function PendingOrdersTable() {
           <p className="text-sm text-muted-foreground">Carregando pedidos...</p>
         ) : orders && orders.length > 0 ? (
           <div className="space-y-4">
-            {orders.map((order) => (
+            {(orders ?? []).slice(0, 5).map((order) => (
               <div
                 key={order.id}
                 className="flex items-center justify-between border-b border-muted py-2"
@@ -69,11 +59,10 @@ export function PendingOrdersTable() {
                 <Button
                   variant="outline"
                   size="sm"
-                  disabled={isValidating}
-                  onClick={() => validateOrder(order.id)}
+                  onClick={() => navigate("/pedidos/validar")}
                 >
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  Validar
+                  <CheckCircle className="w-4 h-4 mr-2" color="red" />
+                  Pendente
                 </Button>
               </div>
             ))}

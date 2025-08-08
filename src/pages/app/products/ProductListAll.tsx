@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { Pencil } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/axios";
@@ -23,6 +25,7 @@ type Product = {
 };
 
 export function ProductListAll() {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const { data: products, isLoading } = useQuery<Product[]>({
@@ -58,6 +61,7 @@ export function ProductListAll() {
               <th className="p-4 text-left">Estoque</th>
               <th className="p-4 text-left">Cashback</th>
               <th className="p-4 text-left">Status</th>
+              <th className="p-4 text-left">Ações</th>
             </tr>
           </thead>
           <tbody className="text-gray-700 text-sm divide-y divide-gray-200">
@@ -102,6 +106,15 @@ export function ProductListAll() {
                       Inativo
                     </span>
                   )}
+                </td>
+                <td className="p-3">
+                  <button
+                    onClick={() => navigate(`/produtos/editar/${product.id}`)}
+                    className="text-blue-600 hover:text-blue-800"
+                    title="Editar"
+                  >
+                    <Pencil size={18} />
+                  </button>
                 </td>
               </tr>
             ))}

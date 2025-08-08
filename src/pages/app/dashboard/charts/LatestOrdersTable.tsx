@@ -1,64 +1,77 @@
-// src/pages/app/dashboard/tables/LatestOrdersTable.tsx
+import { useQuery } from "@tanstack/react-query";
+import { CheckIcon, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useDashboardMetrics } from "@/hooks/use-dashboard-metrics";
+import { api } from "@/lib/axios";
+import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
 
+interface Order {
+  id: string;
+  user_name: string;
+  storeId: string;
+  totalAmount: number;
+  status: "PENDING" | "VALIDATED" | "EXPIRED";
+  createdAt: string;
+}
+
 export function LatestOrdersTable() {
-  const { data, isLoading } = useDashboardMetrics();
-  const orders = data?.latestValidatedOrders ?? [];
+  const navigate = useNavigate();
+
+  const { data: orders, isLoading } = useQuery<Order[]>({
+    queryKey: ["orders", "validated"],
+    queryFn: async () => {
+      const response = await api.get("/orders", {
+        params: { status: "VALIDATED" },
+      });
+      return response.data.orders;
+    },
+  });
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Últimos pedidos validados</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-semibold flex items-center gap-2">
+          <Clock className="w-6 h-6 text-muted-foreground" />
+          Últimos Pedidos Aprovados
+        </CardTitle>
       </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="border-b border-muted">
-                <th className="px-4 py-2 text-left">Cliente</th>
-                <th className="px-4 py-2 text-left">Loja</th>
-                <th className="px-4 py-2 text-right">Valor</th>
-                <th className="px-4 py-2 text-right">Data</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="p-4 text-center text-muted-foreground"
-                  >
-                    Carregando...
-                  </td>
-                </tr>
-              ) : orders.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="p-4 text-center text-muted-foreground"
-                  >
-                    Nenhum pedido encontrado.
-                  </td>
-                </tr>
-              ) : (
-                orders.map((order) => (
-                  <tr key={order.id} className="border-b border-muted">
-                    <td className="px-4 py-2 font-medium">{order.userName}</td>
-                    <td className="px-4 py-2">{order.storeName}</td>
-                    <td className="px-4 py-2 text-right">
-                      R$ {order.total.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-2 text-right">
-                      {formatDate(order.validatedAt)}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+      <CardContent>
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Carregando pedidos...</p>
+        ) : orders && orders.length > 0 ? (
+          <div className="space-y-4">
+            {(orders ?? []).slice(0, 5).map((order) => (
+              <div
+                key={order.id}
+                className="flex items-center justify-between border-b border-muted py-2"
+              >
+                <div>
+                  <p className="text-sm font-medium">{order.user_name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDate(order.createdAt)} -{" "}
+                    {formatCurrency(order.totalAmount)}
+                  </p>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("")}
+                >
+                  <CheckIcon className="w-4 h-4 mr-2" color="green" />
+                  Aprovado
+                </Button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Nenhum pedido pendente encontrado.
+          </p>
+        )}
       </CardContent>
     </Card>
   );

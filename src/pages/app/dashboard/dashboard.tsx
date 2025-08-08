@@ -5,8 +5,8 @@ import { CashbackGeneratedCard } from "./cards/CashbackGeneratedCard";
 import { CashbackUsedCard } from "./cards/CashbackUsedCard";
 import { TotalUsersCard } from "./cards/TotalUsersCard";
 import { CashbackByMonthChart } from "./charts/CashbackByMonthChart";
-import { LatestOrdersPendingTable } from "./charts/LatestOrdersPendingTable";
 import { LatestOrdersTable } from "./charts/LatestOrdersTable";
+import { PendingOrdersTable } from "./charts/PendingOrdersTable";
 import { TopProductsTable } from "./charts/TopProductsTable";
 import { TopUsersTable } from "./charts/TopUsersTable";
 import { DayOrdersAmountCard } from "./filters/day-orders-amount-card";
@@ -34,9 +34,9 @@ export function Dashboard() {
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-2">
           <CashbackByMonthChart />
           <TopUsersTable />
+          <PendingOrdersTable />
           <TopProductsTable />
           <LatestOrdersTable />
-          <LatestOrdersPendingTable />
         </div>
       </div>
     </>
