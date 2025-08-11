@@ -5,58 +5,58 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/axios";
 
-type Banner = {
+type Reel = {
   id: string;
   title: string;
   image_url: string;
   link?: string;
 };
 
-export function BannerList() {
+export function ReelList() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: banners, isLoading } = useQuery<Banner[]>({
-    queryKey: ["banners"],
+  const { data: reels, isLoading } = useQuery<Reel[]>({
+    queryKey: ["reels"],
     enabled: !!user,
     queryFn: async () => {
-      const response = await api.get("/banners");
+      const response = await api.get("/reels");
       return Array.isArray(response.data)
         ? response.data
-        : response.data?.banners ?? []; // prettier-ignore
+        : response.data?.reels ?? []; // prettier-ignore
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await api.delete(`/banners/${id}`); // backend retorna 204
+      await api.delete(`/reels/${id}`); // backend retorna 204
     },
     onSuccess: async () => {
       // Recarrega a lista após deletar
-      await queryClient.invalidateQueries({ queryKey: ["banners"] });
+      await queryClient.invalidateQueries({ queryKey: ["reels"] });
     },
   });
 
   const handleDelete = async (id: string, title?: string) => {
     const ok = window.confirm(
-      `Tem certeza que deseja excluir o banner${title ? ` "${title}"` : ""}?` // eslint-ignore
+      `Tem certeza que deseja excluir o reel${title ? ` "${title}"` : ""}?` // eslint-ignore
     );
     if (!ok) return;
     try {
       await deleteMutation.mutateAsync(id);
     } catch {
-      alert("Não foi possível excluir o banner. Tente novamente.");
+      alert("Não foi possível excluir o reel. Tente novamente.");
     }
   };
 
   if (isLoading)
-    return <p className="p-4 text-gray-600">Carregando banners...</p>;
+    return <p className="p-4 text-gray-600">Carregando reels...</p>;
 
   return (
     <div className="p-6">
       <h1 className="text-3xl font-semibold mb-6 text-gray-800">
-        📦 Lista de Banners
+        📦 Lista de Reels
       </h1>
 
       <div className="overflow-auto rounded-lg shadow">
@@ -70,17 +70,17 @@ export function BannerList() {
             </tr>
           </thead>
           <tbody className="text-gray-700 text-sm divide-y divide-gray-200">
-            {banners?.map((banner) => {
+            {reels?.map((reel) => {
               const isDeleting =
                 deleteMutation.isPending &&
-                deleteMutation.variables === banner.id;
+                deleteMutation.variables === reel.id;
               return (
-                <tr key={banner.id}>
+                <tr key={reel.id}>
                   <td className="p-4">
-                    {banner.image_url ? (
+                    {reel.image_url ? (
                       <img
-                        src={banner.image_url}
-                        alt={banner.title}
+                        src={reel.image_url}
+                        alt={reel.title}
                         className="w-16 h-16 object-cover rounded border"
                       />
                     ) : (
@@ -88,19 +88,19 @@ export function BannerList() {
                     )}
                   </td>
 
-                  <td className="p-4">{banner.title}</td>
-                  <td className="p-4 truncate max-w-xs">{banner.link}</td>
+                  <td className="p-4">{reel.title}</td>
+                  <td className="p-4 truncate max-w-xs">{reel.link}</td>
 
                   <td className="p-4 flex items-center gap-3">
                     <button
-                      onClick={() => navigate(`/banners/editar/${banner.id}`)}
+                      onClick={() => navigate(`/reels/editar/${reel.id}`)}
                       className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
                     >
                       <Pencil className="w-4 h-4" /> Editar
                     </button>
 
                     <button
-                      onClick={() => handleDelete(banner.id, banner.title)}
+                      onClick={() => handleDelete(reel.id, reel.title)}
                       disabled={isDeleting}
                       className={`flex items-center gap-1 text-sm ${
                         isDeleting

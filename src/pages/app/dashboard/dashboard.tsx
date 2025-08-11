@@ -33,10 +33,10 @@ export function Dashboard() {
         {/* Gráficos e tabelas */}
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-2">
           <CashbackByMonthChart />
-          <TopUsersTable />
-          <PendingOrdersTable />
-          <TopProductsTable />
           <LatestOrdersTable />
+          <PendingOrdersTable />
+          <TopUsersTable />
+          <TopProductsTable />
         </div>
       </div>
     </>

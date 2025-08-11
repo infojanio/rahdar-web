@@ -93,7 +93,23 @@ export function Sidebar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/banners" className="hover:underline">
+            <NavLink to="/banners/todos" className="hover:underline">
+              📝 Editar / Excluir
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="font-semibold text-sm mb-2 mt-8">🎬 Reels</h3>
+        <ul className="space-y-1 text-sm">
+          <li>
+            <NavLink to="/reels/novo" className="hover:underline">
+              ➕ Adicionar
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/reels/todos" className="hover:underline">
               📝 Editar / Excluir
             </NavLink>
           </li>

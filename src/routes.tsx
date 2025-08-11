@@ -14,11 +14,17 @@ import { SignIn } from "@/pages/auth/sign-in";
 import { SignUp } from "@/pages/auth/sign-up";
 import { Error } from "@/pages/error";
 
+import { BannerEdit } from "./pages/app/banners/BannerEdit";
+import { BannerList } from "./pages/app/banners/BannerList";
+import { BannerNew } from "./pages/app/banners/BannerNew";
 import { CategoryEdit } from "./pages/app/categories/CategoryEdit";
 import { CategoryList } from "./pages/app/categories/CategoryList";
 import { CategoryNew } from "./pages/app/categories/CategoryNew";
 import { OrderValidationPage } from "./pages/app/orders/OrderValidatePage";
 import { ProductList } from "./pages/app/products/ProductList";
+import { ReelEdit } from "./pages/app/reels/ReelEdit";
+import { ReelList } from "./pages/app/reels/ReelList";
+import { ReelNew } from "./pages/app/reels/ReelNew";
 import { SubcategoryEdit } from "./pages/app/subcategories/SubcategoryEdit";
 import { SubcategoryList } from "./pages/app/subcategories/SubcategoryList";
 import { SubcategoryNew } from "./pages/app/subcategories/SubcategoryNew";
@@ -57,6 +63,33 @@ export const router = createBrowserRouter([
         path: "produtos/editar/:id",
         element: <ProductEdit />,
       },
+
+      {
+        path: "banners/todos",
+        element: <BannerList />,
+      },
+      {
+        path: "banners/novo",
+        element: <BannerNew />,
+      },
+      {
+        path: "banners/editar/:id",
+        element: <BannerEdit />,
+      },
+
+      {
+        path: "reels/todos",
+        element: <ReelList />,
+      },
+      {
+        path: "reels/novo",
+        element: <ReelNew />,
+      },
+      {
+        path: "reels/editar/:id",
+        element: <ReelEdit />,
+      },
+
       {
         path: "categorias/todos",
         element: <CategoryList />,
