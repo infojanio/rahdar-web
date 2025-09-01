@@ -7,3 +7,5 @@ const envSchema = z.object({
 });
 
 export const env = envSchema.parse(import.meta.env);
+
+// npm run dev

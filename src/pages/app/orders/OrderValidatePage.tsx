@@ -33,7 +33,7 @@ type Order = {
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Pendente" },
   { value: "VALIDATED", label: "Aprovado" },
-  { value: "EXPIRED", label: "Recusado" },
+  { value: "EXPIRED", label: "Cancelado" },
 ];
 
 export function OrderValidationPage() {
@@ -53,14 +53,32 @@ export function OrderValidationPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       fetchOrders(1, true);
-      alert(data.message || "Pedido validado com sucesso!");
+      alert(data?.message || "Pedido validado com sucesso!");
     },
-    // prettier-ignore
     onError: (error: any) => {
       const message =
         error?.response?.data?.message || "Erro ao validar o pedido.";
       alert(message);
-    }
+    },
+  });
+
+  // ✅ Cancelar: altera status para EXPIRED
+  const cancelOrder = useMutation({
+    mutationFn: async (orderId: string) => {
+      const response = await api.patch(`/orders/${orderId}/cancel`);
+
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      fetchOrders(1, true);
+      alert(data?.message || "Pedido cancelado com sucesso.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message || "Erro ao cancelar o pedido.";
+      alert(message);
+    },
   });
 
   async function fetchOrders(pageNumber = 1, reset = false) {
@@ -70,7 +88,7 @@ export function OrderValidationPage() {
         params: { page: pageNumber, status: selectedStatus },
       });
 
-      const newOrders = response.data.orders || [];
+      const newOrders: Order[] = response.data.orders || [];
       if (reset) {
         setOrders(newOrders);
       } else {
@@ -107,6 +125,9 @@ export function OrderValidationPage() {
     }, 0);
   };
 
+  const anyMutating =
+    validateOrder.isPending || cancelOrder.isPending || isLoading;
+
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold mb-4 text-gray-800">
@@ -119,6 +140,7 @@ export function OrderValidationPage() {
           value={selectedStatus}
           onChange={(e) => setSelectedStatus(e.target.value)}
           className="border px-3 py-2 rounded text-sm"
+          disabled={anyMutating}
         >
           {STATUS_OPTIONS.map((status) => (
             <option key={status.value} value={status.value}>
@@ -133,6 +155,7 @@ export function OrderValidationPage() {
           value={searchId}
           onChange={(e) => setSearchId(e.target.value)}
           className="border px-3 py-2 rounded text-sm w-full sm:w-64"
+          disabled={anyMutating}
         />
       </div>
 
@@ -173,18 +196,22 @@ export function OrderValidationPage() {
 
             <div className="grid sm:grid-cols-2 gap-3 mb-3">
               {order.items.map((item, idx) => (
-                <div key={idx} className="flex items-start gap-3">
+                <div
+                  key={item.product?.id ?? `${order.id}-${idx}`}
+                  className="flex items-start gap-3"
+                >
                   <img
                     src={
                       item.product?.image || "https://via.placeholder.com/80"
                     }
-                    alt={item.product?.name}
+                    alt={item.product?.name ?? "Produto"}
                     className="w-16 h-16 object-cover rounded border"
                   />
                   <div>
                     <p className="font-medium">{item.product?.name}</p>
                     <p className="text-sm text-gray-600">
-                      {item.quantity}x R$ {item.product?.price.toFixed(2)}
+                      {item.quantity}x R${" "}
+                      {(item.product?.price ?? 0).toFixed(2)}
                     </p>
                     {(!order.discountApplied ||
                       order.discountApplied === 0) && (
@@ -213,17 +240,36 @@ export function OrderValidationPage() {
             </div>
 
             {order.status === "PENDING" && (
-              <div className="pt-3">
+              <div className="pt-3 flex flex-col sm:flex-row gap-2">
                 <button
                   onClick={() => {
-                    const confirm = window.confirm(
+                    const ok = window.confirm(
                       `Confirmar validação do pedido ${order.id.slice(0, 8)}?`
                     );
-                    if (confirm) validateOrder.mutate(order.id);
+                    if (ok) validateOrder.mutate(order.id);
                   }}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-60"
+                  disabled={anyMutating}
                 >
-                  Validar Cashback
+                  {validateOrder.isPending
+                    ? "Validando..."
+                    : "Validar Cashback"}
+                </button>
+
+                <button
+                  onClick={() => {
+                    const ok = window.confirm(
+                      `Confirmar cancelamento (EXPIRED) do pedido ${order.id.slice(
+                        0,
+                        8
+                      )}?`
+                    );
+                    if (ok) cancelOrder.mutate(order.id);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-60"
+                  disabled={anyMutating}
+                >
+                  {cancelOrder.isPending ? "Cancelando..." : "Cancelar Pedido"}
                 </button>
               </div>
             )}
@@ -231,7 +277,7 @@ export function OrderValidationPage() {
         ))
       )}
 
-      {/* Paginação */}
+      {/* Paginação simples */}
       <div className="text-center mt-6">
         <button
           onClick={() => {
@@ -239,10 +285,10 @@ export function OrderValidationPage() {
             setPage(nextPage);
             fetchOrders(nextPage);
           }}
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-blue-600 hover:underline disabled:opacity-60"
           disabled={isLoading}
         >
-          Carregar mais
+          {isLoading ? "Carregando..." : "Carregar mais"}
         </button>
       </div>
     </div>
