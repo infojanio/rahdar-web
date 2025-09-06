@@ -1,9 +1,10 @@
 import axios from "axios";
 
+import { env } from "@/env";
 import { Product } from "@/types/product";
 
 const api = axios.create({
-  baseURL: "http://localhost:3333",
+  baseURL: env.VITE_API_URL,
 });
 
 export async function getProducts(): Promise<Product[]> {
@@ -25,5 +26,5 @@ export async function updateProduct(id: string, data: Partial<Product>) {
 }
 
 export async function deleteProduct(id: string) {
-  await api.delete(`/products/${id}`);
+  await api.delete(`/products/delete/${id}`);
 }

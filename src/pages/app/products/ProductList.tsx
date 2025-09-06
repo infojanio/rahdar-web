@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { Pencil } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -28,6 +28,7 @@ type ProductResponse = {
 
 export function ProductList() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { user } = useAuth();
 
@@ -55,6 +56,28 @@ export function ProductList() {
         totalPages,
         currentPage: page,
       };
+    },
+  });
+
+  const { mutateAsync: softDeleteProduct } = useMutation({
+    mutationFn: async (product: Product) => {
+      // Busca os dados completos do produto antes de atualizar
+      const response = await api.get(`/products/${product.id}`);
+      const fullProduct = response.data;
+
+      await api.patch(`/products/${product.id}`, {
+        name: fullProduct.name,
+        description: fullProduct.description,
+        price: Number(fullProduct.price),
+        quantity: 0,
+        status: false,
+        image: fullProduct.image,
+        subcategory_id: fullProduct.subcategory_id || "", // ⚠️ essencial
+        cashback_percentage: Number(fullProduct.cashback_percentage),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
@@ -102,7 +125,6 @@ export function ProductList() {
           <tr>
             <th className="p-3 text-left">Imagem</th>
             <th className="p-3 text-left">Nome</th>
-
             <th className="p-3 text-left">Descrição</th>
             <th className="p-3 text-left">Preço</th>
             <th className="p-3 text-left">Estoque</th>
@@ -133,7 +155,6 @@ export function ProductList() {
                 )}
               </td>
               <td className="p-3">{product.name}</td>
-
               <td className="p-3">{product.description}</td>
               <td className="p-3">R$ {parseFloat(product.price).toFixed(2)}</td>
               <td className="p-3">{product.quantity}</td>
@@ -147,6 +168,22 @@ export function ProductList() {
                 >
                   <Pencil size={18} />
                 </button>
+                {product.status && (
+                  <button
+                    onClick={async () => {
+                      if (
+                        confirm("Tem certeza que deseja excluir este produto?")
+                      ) {
+                        await softDeleteProduct(product);
+                        alert("Produto excluído com sucesso.");
+                      }
+                    }}
+                    className="text-red-600 hover:text-red-800"
+                    title="Excluir"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
               </td>
             </tr>
           ))}

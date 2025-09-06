@@ -27,17 +27,18 @@ export function Sidebar() {
               ➕ Novo
             </NavLink>
           </li>
-
-          <li>
-            <NavLink to="/produtos/todos" className="hover:underline">
-              🧾 Listar
-            </NavLink>
-          </li>
           <li>
             <NavLink to="/produtos" className="hover:underline">
-              🔎 Buscar
+              🔎 Editar / Excluir
             </NavLink>
           </li>
+          {/* 
+          <li>
+            <NavLink to="/produtos/todos" className="hover:underline">
+              🧾 Lista Completa
+            </NavLink>
+          </li>
+          */}
         </ul>
       </div>
 

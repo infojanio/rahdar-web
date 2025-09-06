@@ -151,6 +151,7 @@ export function ProductEdit() {
           />
         </div>
 
+        {/*
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -170,6 +171,7 @@ export function ProductEdit() {
             Produto Ativo
           </label>
         </div>
+          */}
 
         <div>
           <label className="block text-sm font-semibold">
